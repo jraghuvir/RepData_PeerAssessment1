@@ -1,24 +1,26 @@
 ---
 title: "5.2 Assignment Submission"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 #1. Loading and preprocessing the data
 
-```{r read data}
+```{r.read}
 setwd("~/Desktop/Coursera/5.2 assignment")
 data<-read.csv(file = "activity.csv")
 ```
 
 ## Here are the first 6 rows of the data: 
 
-```{r head}
+```{r.head}
 head(data)
 ```
 
 #2. What is mean total number of steps taken per day?
 ## aggregate data to calculate total number of steps per day and plot on histogram
-```{r histogram}
+```{r.histogram}
 
 sumdata<-aggregate(x=list(steps = data$steps), by=list(date=data$date), FUN=sum, na.rm=TRUE)
 hist(sumdata$steps, xlab="steps per day")
@@ -26,14 +28,14 @@ hist(sumdata$steps, xlab="steps per day")
 ```
 
 ## Calculate and report the mean and median of the total number of steps taken per day
-```{r mean and median}
+```{r.mean&median}
 summary(sumdata$steps)[3:4]
 ```
 
 #3. What is the average daily activity pattern?
 ##Time series plot of the 5-minute interval
 
-```{r time series of average steps}
+```{r.time.series.average.steps}
 
 sum.int<-aggregate(x=list(steps = data$steps), by=list(interval=data$interval), FUN=mean, na.rm=TRUE)
 with(sum.int, plot(interval, steps, type = "l"))
@@ -44,34 +46,34 @@ sum.int[sum.int$steps == max(sum.int$steps),]
 #4. Imputing missing values
 ## Total number of missing values in the dataset
 
-```{r NA}
+```{r.NA}
 summary(data$steps)[7]
 ```
 ## Define function to replace na in a list by mean of that list.
 ## Use that function in conjunction with ddply to replace na in each group of the dataset by mean of that group.
 
-```{r NA replace}
+```{r.NA.impute}
 library(plyr)
 impute.mean <- function(x) replace(x,is.na(x), mean(x,na.rm = TRUE) )
 data2<-ddply(data, ~ interval, transform, steps=impute.mean(steps))
 ```
 
 ## aggregate new data to calculate total number of steps per day and plot on histogram
-```{r histogram2}
+```{r.histogram2}
 
 sumdata2<-aggregate(x=list(steps = data2$steps), by=list(date=data2$date), FUN=sum, na.rm=TRUE)
 hist(sumdata2$steps, xlab="steps per day")
 
 ```
 ## Calculate and report the mean and median of the total number of steps taken per day
-```{r mean and median2}
+```{r.mean2}
 summary(sumdata2$steps)[3:4]
 ```
 #5. Find weekday v/s weekend pattern
 ## transform the date field from factor to date and create weekday/weekend value
 ## sort the data by date and interval
 
-```{r weekday}
+```{r.weekday}
 data2$date <- as.Date(as.character(data2$date))
 data2$wday <- as.POSIXlt(data2$date)$wday
 data2$wday2 <- ifelse(data2$wday %in% c(0,6), "weekend", "weekday")
@@ -80,7 +82,7 @@ data3 <- arrange(data2, date, interval)
 
 ## summarize the data by interval and weekday/weekend
 ## create two plot panel using lettis
-```{r plot weekday/weekend}
+```{r.plot.weekday.weekend}
 aggdata3<-aggregate(x=list(steps = data3$steps), by=list(interval=data3$interval,weekday.end=data3$wday2),FUN=mean)
 library(lattice)
 xyplot(steps~interval|weekday.end, data = aggdata3, type= "l")
