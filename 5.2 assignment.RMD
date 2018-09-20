@@ -2,6 +2,7 @@
 title: "5.2 Assignment Submission"
 output: 
   html_document: 
+    fig_caption: yes
     keep_md: yes
 ---
 
@@ -22,7 +23,7 @@ head(data)
 ## aggregate data to calculate total number of steps per day and plot on histogram
 ```{r.histogram}
 
-sumdata<-aggregate(x=list(steps = data$steps), by=list(date=data$date), FUN=sum, na.rm=TRUE)
+sumdata<-aggregate(x=list(steps = data$steps), by=list(date=data$date), FUN=sum)
 hist(sumdata$steps, xlab="steps per day")
 
 ```
